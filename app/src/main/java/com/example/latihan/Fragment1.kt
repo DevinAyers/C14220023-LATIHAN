@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.EditText
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -21,6 +23,10 @@ class Fragment1 : Fragment() {
     private var param1: String? = null
     private var param2: String? = null
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -33,8 +39,33 @@ class Fragment1 : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_1, container, false)
+        val view = inflater.inflate(R.layout.fragment_1, container, false)
+
+        val btnKali = view.findViewById<Button>(R.id.btnKali)
+        val btnBagi = view.findViewById<Button>(R.id.btnBagi)
+
+        btnKali.setOnClickListener { hitungOperasi("*") }
+        btnBagi.setOnClickListener { hitungOperasi("/") }
+
+        return view
+    }
+
+    private fun hitungOperasi(operasi: String) {
+        val angka1 = activity?.findViewById<EditText>(R.id.txAngka1)?.text.toString().toIntOrNull() ?: 0
+        val angka2 = activity?.findViewById<EditText>(R.id.txAngka2)?.text.toString().toIntOrNull() ?: 0
+
+        val hasil = when (operasi) {
+            "*" -> angka1 * angka2
+            "/" -> if (angka2 != 0) angka1 / angka2 else 0
+            else -> 0
+        }
+
+        val fragment2 = Fragment2.newInstance("$angka1 $operasi $angka2 = $hasil")
+
+        activity?.supportFragmentManager?.beginTransaction()
+            ?.replace(R.id.fragmentContainer, fragment2)
+            ?.addToBackStack(null)
+            ?.commit()
     }
 
     companion object {
